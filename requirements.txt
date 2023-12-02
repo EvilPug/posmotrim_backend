@@ -1,0 +1,19 @@
+# API
+fastapi
+uvicorn[standard]
+fastapi-users[sqlalchemy]
+
+
+# Data
+pandas
+asyncpg
+pydantic
+sqlalchemy
+
+
+# Security
+passlib[bcrypt]
+python-jose[cryptography]
+
+# Other
+python-dotenv
