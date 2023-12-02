@@ -55,10 +55,10 @@
 
 9) Сервис доступен по адресу:
     ```
-   http://localhost:8000
+    http://localhost:8000
     ```
 
 10) Если вам нужен другой адрес вы можете изменить его в main файле или запустить сервис командой (изменив значения):
-   ```
-   uvicorn src.app.app:app --host 127.0.0.1 --port 8000 --reload 
-   ```
+    ```
+    uvicorn src.app.app:app --host 127.0.0.1 --port 8000 --reload
+    ```
