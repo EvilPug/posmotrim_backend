@@ -4,7 +4,8 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy import String, Integer, ARRAY
 
 from src.app.db import async_session_maker
-from src.app.config import DATABASE_URL
+from src.utils.logging import logging
+from src.config import DATABASE_URL
 
 
 engine = create_async_engine(DATABASE_URL)
@@ -55,4 +56,4 @@ async def main():
 
 if __name__ == '__main__':
     run(main())
-    print('Таблица films успешно заполнена!')
+    logging.info('Таблица films успешно заполнена!')

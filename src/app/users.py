@@ -7,6 +7,7 @@ from fastapi_users.authentication import AuthenticationBackend, BearerTransport,
 from src.config import SECRET
 from src.app.models import User
 from src.app.db import get_user_db
+from src.utils.logging import logging
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, User.id]):
@@ -14,17 +15,17 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, User.id]):
     verification_token_secret = SECRET
 
     async def on_after_register(self, user: User, request: Optional[Request] = None):
-        print(f"User {user.id} has registered.")
+        logging.info(f"Пользователь {user.id} зарегистрирован")
 
     async def on_after_forgot_password(
         self, user: User, token: str, request: Optional[Request] = None
     ):
-        print(f"Пользователь {user.id} забыл свой пароль. Токен для сброса: {token}")
+        logging.info(f"Пользователь {user.id} забыл свой пароль. Токен для сброса: {token}")
 
     async def on_after_request_verify(
         self, user: User, token: str, request: Optional[Request] = None
     ):
-        print(f"Verification requested for user {user.id}. Verification token: {token}")
+        logging.info(f"Запрошена верификация для {user.id}. Токен для верификации: {token}")
 
 
 async def get_user_manager(user_db: SQLAlchemyUserDatabase = Depends(get_user_db)):
