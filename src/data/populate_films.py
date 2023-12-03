@@ -3,9 +3,10 @@ from asyncio import run
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy import String, Integer, ARRAY
 
-from src.app.db import async_session_maker
-from src.utils.logging import logging
 from src.config import DATABASE_URL
+from src.utils.logging_util import logging
+from src.app.db import async_session_maker
+
 
 engine = create_async_engine(DATABASE_URL)
 

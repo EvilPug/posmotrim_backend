@@ -7,7 +7,7 @@ from fastapi_users.authentication import AuthenticationBackend, BearerTransport,
 from src.config import SECRET
 from src.app.models import User
 from src.app.db import get_user_db
-from src.utils.logging import logging
+from src.utils.logging_util import logging
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, User.id]):
