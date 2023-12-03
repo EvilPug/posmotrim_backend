@@ -3,6 +3,8 @@ from fastapi import APIRouter
 from src.app.db import db_get_film, db_get_film_recommendations, db_get_top_films_by_genre
 
 router = APIRouter(
+    prefix="/films",
+    tags=["films"],
     responses={404: {"description": "Not found"}},
 )
 
@@ -18,7 +20,7 @@ async def get_film(film_id: int):
     return film
 
 
-@router.get("/top_films_by_genre/{genre}/{count}")
+@router.get("/top_films_by_genre/{genre, count}")
 async def get_top_films_by_genre(genre: str, count: int):
     """
     Возвращает список размера count сущностей класса Film, в выбранном жанре.
