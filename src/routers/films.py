@@ -2,11 +2,7 @@ from fastapi import APIRouter
 
 from src.app.db import db_get_film, db_get_film_recommendations, db_get_top_films_by_genre
 
-router = APIRouter(
-    prefix="/films",
-    tags=["films"],
-    responses={404: {"description": "Not found"}},
-)
+router = APIRouter()
 
 
 @router.get("/{film_id}")
