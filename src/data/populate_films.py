@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from asyncio import run
 from sqlalchemy.ext.asyncio import create_async_engine
@@ -74,8 +75,14 @@ def get_close_films_df(csv_path: str) -> pd.DataFrame:
 
 async def main():
 
-    films_df = get_films_df('films_data.csv')
-    close_df = get_close_films_df('close_films.csv')
+    data_dir = os.path.normpath(os.getcwd() + os.sep + os.pardir + '/data')
+    print(data_dir)
+
+    films_csv_path = os.path.join(data_dir, 'films_data.csv')
+    close_csv_path = os.path.join(data_dir, 'close_films.csv')
+
+    films_df = get_films_df(films_csv_path)
+    close_df = get_close_films_df(close_csv_path)
 
     films_df['close_film_ids'] = close_df['close_film_ids']
 
