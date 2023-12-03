@@ -15,7 +15,7 @@ from sqlalchemy import (
     Enum
 )
 
-from src.app.schemas import StatusEnum, Rating
+from src.app.schemas import StatusEnum, RatingEnum
 
 
 class Base(DeclarativeBase):
@@ -88,7 +88,7 @@ class Status(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     status: Mapped[StatusEnum] = mapped_column(Enum(StatusEnum), nullable=False)
-    rating: Mapped[Rating] = mapped_column(Integer, nullable=False)
+    rating: Mapped[RatingEnum] = mapped_column(Enum(RatingEnum), nullable=False)
 
     # Relationships
     film_id: Mapped[int] = mapped_column(ForeignKey("films.kinopoisk_id"))

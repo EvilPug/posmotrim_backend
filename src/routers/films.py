@@ -20,7 +20,7 @@ async def get_film(film_id: int):
     return film
 
 
-@router.get("/top_films_by_genre/{genre, count}")
+@router.get("/top_films_by_genre/{genre}/{count}")
 async def get_top_films_by_genre(genre: str, count: int):
     """
     Возвращает список размера count сущностей класса Film, в выбранном жанре.

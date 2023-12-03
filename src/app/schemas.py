@@ -1,6 +1,6 @@
-from enum import Enum
+from enum import Enum, IntEnum
 from datetime import datetime, UTC
-from typing import Optional, Literal
+from typing import Optional, Sequence, List
 from pydantic import BaseModel, ConfigDict, EmailStr
 
 
@@ -14,7 +14,17 @@ class StatusEnum(Enum):
     quit = 'Бросил'
 
 
-Rating = Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+class RatingEnum(IntEnum):
+    one = 1
+    two = 2
+    three = 3
+    four = 4
+    five = 5
+    six = 6
+    seven = 7
+    eight = 8
+    nine = 9
+    ten = 10
 
 
 class UserRead(schemas.BaseUser):
@@ -68,18 +78,18 @@ class StatusRead(BaseModel):
     """
     id: int
     status: StatusEnum
-    rating: Rating
+    rating: RatingEnum
     user_id: int
     film_id: int
 
 
 class StatusCreate(BaseModel):
     status: StatusEnum
-    rating: Rating
+    rating: RatingEnum
     user_id: int
     film_id: int
 
 
 class StatusUpdate(BaseModel):
     status: StatusEnum
-    rating: Rating
+    rating: RatingEnum

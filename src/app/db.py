@@ -5,7 +5,9 @@ from fastapi_users.db import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from src.config import DATABASE_URL
+from src.utils.exceptions import UserNotFound, FilmNotFound
 from src.app.models import Base, User, Film, Status
+from src.app.schemas import StatusEnum, RatingEnum
 
 
 engine = create_async_engine(DATABASE_URL)
@@ -147,7 +149,55 @@ async def db_get_user_statuses(user_id: int) -> Sequence[Status]:
 
     async with async_session_maker() as session:
         async with session.begin():
+
+            # Проверяем, что существует пользователь
+            user = await db_get_user_by_id(user_id)
+            if not user:
+                raise UserNotFound
+
             q = select(Status).where(Status.user_id == user_id)
             status = await session.execute(q)
             return status.scalars().all()
+
+
+async def db_create_or_update_status(user_id: int, film_id: int, status: StatusEnum, rating: RatingEnum) -> Status:
+    """
+    Создает и возвращает статус и рейтинг, который поставил пользователь конкретному фильму
+
+    :param user_id: id пользователя
+    :param film_id: id пользователя
+    :param status: пользовательский статус фильма
+    :param rating: пользовательский рейтинг фильма
+    """
+
+    async with async_session_maker() as session:
+        async with session.begin():
+
+            # Проверяем, что существует пользователь
+            user = await db_get_user_by_id(user_id)
+            if not user:
+                raise UserNotFound
+
+            # Проверяем, что существует фильм
+            film = await db_get_film(film_id)
+            if not film:
+                raise FilmNotFound
+
+            film_status = await db_get_film_status(user_id, film_id)
+            if film_status:
+                film_status.status = status
+                film_status.rating = rating
+                await session.commit()
+                return film_status
+
+            else:
+                film_status = Status(
+                    user_id=user_id,
+                    film_id=film_id,
+                    status=status,
+                    rating=rating
+                )
+                session.add(film_status)
+                await session.commit()
+                return film_status
 

@@ -26,7 +26,7 @@ async def df_to_db(df: pd.DataFrame, table_name: str, dtypes: dict) -> None:
             lambda sync_conn: df.to_sql(
                 name=table_name,
                 con=sync_conn,
-                if_exists='replace',
+                if_exists='append',
                 index=False,
                 dtype=dtypes
             ),
