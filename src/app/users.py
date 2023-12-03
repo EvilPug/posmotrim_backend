@@ -47,4 +47,5 @@ auth_backend = AuthenticationBackend(
 
 fastapi_users = FastAPIUsers[User, User.id](get_user_manager, [auth_backend])
 
+current_user = fastapi_users.current_user()
 current_active_user = fastapi_users.current_user(active=True)

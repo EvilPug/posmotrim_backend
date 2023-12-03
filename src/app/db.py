@@ -1,11 +1,11 @@
 from fastapi import Depends
-from sqlalchemy import select
-from typing import AsyncGenerator, List
+from sqlalchemy import select, Sequence, and_
+from typing import AsyncGenerator, Type
 from fastapi_users.db import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from src.config import DATABASE_URL
-from src.app.models import Base, User, Film
+from src.app.models import Base, User, Film, Status
 
 
 engine = create_async_engine(DATABASE_URL)
@@ -32,7 +32,7 @@ async def get_user_db(session: AsyncSession = Depends(get_async_session)):
     yield SQLAlchemyUserDatabase(session, User)
 
 
-async def db_get_user_by_id(user_id: int) -> User:
+async def db_get_user_by_id(user_id: int) -> Type[User]:
     """
     Возвращает пользователя, найденного по user_id
 
@@ -58,7 +58,7 @@ async def db_get_user_by_username(username: str) -> User:
             return users.scalars().first()
 
 
-async def db_get_all_users() -> List[User]:
+async def db_get_all_users() -> Sequence[User]:
     """
     Возвращает всех пользователей сервиса
     """
@@ -71,7 +71,7 @@ async def db_get_all_users() -> List[User]:
 
 
 # Films
-async def db_get_film(film_id: int) -> Film:
+async def db_get_film(film_id: int) -> Type[Film]:
     """
      Возвращает конкретный экземпляр класса Film, полученный по film_id
 
@@ -84,7 +84,7 @@ async def db_get_film(film_id: int) -> Film:
             return film
 
 
-async def db_get_top_films_by_genre(genre: str, count: int) -> List[Film]:
+async def db_get_top_films_by_genre(genre: str, count: int) -> Sequence[Film]:
     """
     Возвращает список размера count сущностей класса Film, в выбранном жанре.
     Фильмы отсортированы по рейтингу IMDB от лучших к худшим
@@ -100,7 +100,7 @@ async def db_get_top_films_by_genre(genre: str, count: int) -> List[Film]:
             return films.scalars().all()
 
 
-async def db_get_film_recommendations(film_id: int) -> List[Film]:
+async def db_get_film_recommendations(film_id: int) -> Sequence[Film]:
     """
     Возвращает список рекомендованных фильмов в виде экземпляров класса Film
 
@@ -121,3 +121,33 @@ async def db_get_film_recommendations(film_id: int) -> List[Film]:
             close_films_q = select(Film).where(Film.kinopoisk_id.in_(close_ids))
             films = await session.execute(close_films_q)
             return films.scalars().all()
+
+
+async def db_get_film_status(user_id: int, film_id: int) -> Status:
+    """
+    Возвращает статус и рейтинг, который поставил пользователь конкретному фильму
+
+    :param user_id: id пользователя
+    :param film_id: id фильма
+    """
+
+    async with async_session_maker() as session:
+        async with session.begin():
+            q = select(Status).where(and_(Status.user_id == user_id, Status.film_id == film_id))
+            status = await session.execute(q)
+            return status.scalars().first()
+
+
+async def db_get_user_statuses(user_id: int) -> Sequence[Status]:
+    """
+    Возвращает статусы и рейтинги, который поставил пользователь фильмам
+
+    :param user_id: id пользователя
+    """
+
+    async with async_session_maker() as session:
+        async with session.begin():
+            q = select(Status).where(Status.user_id == user_id)
+            status = await session.execute(q)
+            return status.scalars().all()
+
