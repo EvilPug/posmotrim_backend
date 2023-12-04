@@ -1,13 +1,13 @@
 from fastapi import Depends
-from sqlalchemy import select, Sequence, and_
 from typing import AsyncGenerator, Type
+from sqlalchemy import select, Sequence, and_
 from fastapi_users.db import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from src.config import DATABASE_URL
-from src.utils.exceptions import UserNotFound, FilmNotFound
-from src.app.models import Base, User, Film, Status
 from src.app.schemas import StatusEnum, RatingEnum
+from src.app.models import Base, User, Film, Status
+from src.utils.exceptions import UserNotFound, FilmNotFound
 
 
 engine = create_async_engine(DATABASE_URL)

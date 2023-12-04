@@ -1,8 +1,8 @@
 import os
 import pandas as pd
 from asyncio import run
-from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy import String, Integer, ARRAY
+from sqlalchemy.ext.asyncio import create_async_engine
 
 from src.config import DATABASE_URL
 from src.utils.logging_util import logging

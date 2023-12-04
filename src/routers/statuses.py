@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, status, HTTPException
-import fastapi_users
 
-from src.app.users import current_active_user, current_user
-from src.app.schemas import StatusEnum, RatingEnum, UserRead, StatusRead
-from src.utils.exceptions import UserNotFound, FilmNotFound, StatusesNotFound
+from src.app.users import current_user
+from src.app.schemas import StatusEnum, RatingEnum
+from src.utils.exceptions import UserNotFound, FilmNotFound
 from src.app.db import db_get_film_status, db_get_user_statuses, db_create_or_update_status
+
 
 statuses_router = APIRouter()
 

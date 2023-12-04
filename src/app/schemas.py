@@ -1,7 +1,7 @@
+from typing import Optional
+from datetime import datetime
 from enum import Enum, IntEnum
-from datetime import datetime, UTC
-from typing import Optional, Sequence, List
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, Field
 
 
 from fastapi_users import schemas
@@ -83,13 +83,11 @@ class StatusRead(BaseModel):
     film_id: int
 
 
-class StatusCreate(BaseModel):
-    status: StatusEnum
-    rating: RatingEnum
+class StatusUpdate(BaseModel):
+    """
+    Схема статуса с необходимыми полями при создании или изменении
+    """
     user_id: int
     film_id: int
-
-
-class StatusUpdate(BaseModel):
     status: StatusEnum
     rating: RatingEnum

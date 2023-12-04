@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 
+
 if not load_dotenv():
     raise Exception('.env file not found! Please create it in src folder!')
 
