@@ -75,7 +75,7 @@ async def db_get_all_users() -> Sequence[User]:
 # Films
 async def db_get_film(film_id: int) -> Type[Film]:
     """
-     Возвращает конкретный экземпляр класса Film, полученный по film_id
+     Возвращает конкретный экземпляр класса Film, полученный по film_id.
 
      :param film_id: id фильма
      """
@@ -83,7 +83,11 @@ async def db_get_film(film_id: int) -> Type[Film]:
     async with async_session_maker() as session:
         async with session.begin():
             film = await session.get(Film, film_id)
-            return film
+
+            if film:
+                return film
+            else:
+                raise FilmNotFound
 
 
 async def db_get_top_films_by_genre(genre: str, count: int) -> Sequence[Film]:
@@ -112,13 +116,8 @@ async def db_get_film_recommendations(film_id: int) -> Sequence[Film]:
     async with async_session_maker() as session:
         async with session.begin():
 
-            close_q = select(Film.close_film_ids).where(Film.kinopoisk_id == film_id)
-            close_ids = await session.execute(close_q)
-
-            try:
-                close_ids = close_ids.scalars().all()[0]
-            except IndexError:
-                close_ids = close_ids.scalars().all()
+            film = await db_get_film(film_id)
+            close_ids = film.close_film_ids
 
             close_films_q = select(Film).where(Film.kinopoisk_id.in_(close_ids))
             films = await session.execute(close_films_q)
