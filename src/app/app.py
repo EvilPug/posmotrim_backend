@@ -1,4 +1,5 @@
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, Request
+from fastapi.applications import get_swagger_ui_html
 
 from src.app.models import User
 from src.app.db import create_db_and_tables
@@ -41,3 +42,10 @@ async def on_startup() -> None:
     Инициализация БД и таблиц в ней при запуске сервиса
     """
     await create_db_and_tables()
+
+
+@app.get('/docs', include_in_schema=False)
+async def get_documenatation(request: Request):
+    print(request.scope)
+    return get_swagger_ui_html(openapi_url=request.scope.get('root_path')+"openapi.json",
+                               title='Swagger')
