@@ -1,7 +1,7 @@
 from enum import Enum, IntEnum
 from datetime import datetime, UTC
 from typing import Optional, Sequence, List
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 from fastapi_users import schemas
@@ -44,7 +44,7 @@ class UserCreate(schemas.BaseUserCreate):
 
     username: str
     birthday: datetime
-    created_at: datetime = datetime.now(UTC)
+    created_at: datetime = Field(default_factory=datetime.now, hidden=True)
 
 
 class UserUpdate(schemas.BaseUserUpdate):
