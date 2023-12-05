@@ -186,6 +186,7 @@ async def db_create_or_update_status(user_id: int, film_id: int, status: StatusE
             if film_status:
                 film_status.status = status
                 film_status.rating = rating
+                session.add(film_status)
                 await session.commit()
                 return film_status
 

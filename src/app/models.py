@@ -87,8 +87,8 @@ class Status(Base):
     __tablename__ = "statuses"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    status: Mapped[StatusEnum] = mapped_column(Enum(StatusEnum), nullable=False)
-    rating: Mapped[RatingEnum] = mapped_column(Enum(RatingEnum), nullable=False)
+    status: Mapped[StatusEnum] = mapped_column(Enum(StatusEnum), nullable=True)
+    rating: Mapped[RatingEnum] = mapped_column(Enum(RatingEnum), nullable=True)
 
     # Relationships
     film_id: Mapped[int] = mapped_column(ForeignKey("films.kinopoisk_id"))

@@ -89,5 +89,5 @@ class StatusUpdate(BaseModel):
     """
     user_id: int
     film_id: int
-    status: StatusEnum
-    rating: RatingEnum
+    status: Optional[StatusEnum] = None
+    rating: Optional[RatingEnum] = None

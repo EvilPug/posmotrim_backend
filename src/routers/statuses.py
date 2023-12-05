@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from typing import Optional
+from fastapi import APIRouter, Depends, status, HTTPException, Form
 
 from src.app.users import current_user
-from src.app.schemas import StatusEnum, RatingEnum
+from src.app.schemas import StatusEnum, RatingEnum, StatusUpdate
 from src.utils.exceptions import UserNotFound, FilmNotFound
 from src.app.db import db_get_film_status, db_get_user_statuses, db_create_or_update_status
 
@@ -73,6 +74,7 @@ async def get_user_statuses(user_id: int):
 
 @statuses_router.post(
     path="/update/{user_id}/{film_id}/{status}/{rating}",
+    response_model=StatusUpdate,
     dependencies=[Depends(current_user)],
     name="statuses:get_user_statuses",
     responses={
@@ -84,7 +86,7 @@ async def get_user_statuses(user_id: int):
         },
     },
 )
-async def create_or_update_status(user_id: int, film_id: int, status: StatusEnum, rating: RatingEnum):
+async def create_or_update_status(film_status: StatusUpdate):
     """
     Создает/редактирует объект Status в базе данных и возвращает его
 
@@ -97,7 +99,10 @@ async def create_or_update_status(user_id: int, film_id: int, status: StatusEnum
     print(current_user)
 
     try:
-        film_status = await db_create_or_update_status(user_id, film_id, status, rating)
+        film_status = await db_create_or_update_status(film_status.user_id,
+                                                       film_status.film_id,
+                                                       film_status.status,
+                                                       film_status.rating)
         return film_status
     except UserNotFound:
         raise HTTPException(status_code=404,
