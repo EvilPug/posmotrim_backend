@@ -159,6 +159,27 @@ async def db_get_user_statuses(user_id: int) -> Sequence[Status]:
             return status.scalars().all()
 
 
+async def db_get_user_statuses_by_status(user_id: int, status: StatusEnum) -> Sequence[Status]:
+    """
+    Возвращает статусы и рейтинги, который поставил пользователь фильмам с фильтром по статусу
+
+    :param user_id: id пользователя
+    :param status: статус
+    """
+
+    async with async_session_maker() as session:
+        async with session.begin():
+
+            # Проверяем, что существует пользователь
+            user = await db_get_user_by_id(user_id)
+            if not user:
+                raise UserNotFound
+
+            q = select(Status).where(and_(Status.user_id == user_id, Status.status == status))
+            status = await session.execute(q)
+            return status.scalars().all()
+
+
 async def db_create_or_update_status(user_id: int, film_id: int, status: StatusEnum, rating: RatingEnum) -> Status:
     """
     Создает и возвращает статус и рейтинг, который поставил пользователь конкретному фильму

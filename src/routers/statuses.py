@@ -4,8 +4,7 @@ from fastapi import APIRouter, Depends, status, HTTPException, Form
 from src.app.users import current_user
 from src.app.schemas import StatusEnum, RatingEnum, StatusUpdate
 from src.utils.exceptions import UserNotFound, FilmNotFound
-from src.app.db import db_get_film_status, db_get_user_statuses, db_create_or_update_status
-
+from src.app import db
 
 statuses_router = APIRouter()
 
@@ -30,7 +29,7 @@ async def get_film_status(user_id: int, film_id: int):
     :param user_id: id пользователя
     :param film_id: id фильма
     """
-    film_status = await db_get_film_status(user_id, film_id)
+    film_status = await db.db_get_film_status(user_id, film_id)
     if film_status:
         return film_status
     else:
@@ -59,7 +58,42 @@ async def get_user_statuses(user_id: int):
     """
 
     try:
-        user_statuses = await db_get_user_statuses(user_id)
+        user_statuses = await db.db_get_user_statuses(user_id)
+
+        if user_statuses:
+            return user_statuses
+        else:
+            raise HTTPException(status_code=404,
+                                detail="User has no statuses")
+
+    except UserNotFound:
+        raise HTTPException(status_code=404,
+                            detail="User does not exist")
+
+
+@statuses_router.get(
+    path="/get_user_statuses_by_status/{user_id}/{film_status}",
+    dependencies=[Depends(current_user)],
+    name="statuses:get_user_statuses_by_status",
+    responses={
+        status.HTTP_401_UNAUTHORIZED: {
+            "description": "Missing token or inactive user",
+        },
+        status.HTTP_404_NOT_FOUND: {
+            "description": "User does not exist or has no statuses",
+        },
+    },
+)
+async def get_user_statuses_by_status(user_id: int, film_status: StatusEnum):
+    """
+    Возвращает статусы и рейтинги, который поставил пользователь фильмам с фильтром по статусу
+
+    :param user_id: id пользователя
+    :param film_status: статус
+    """
+
+    try:
+        user_statuses = await db.db_get_user_statuses_by_status(user_id, film_status)
 
         if user_statuses:
             return user_statuses
@@ -99,10 +133,10 @@ async def create_or_update_status(film_status: StatusUpdate):
     print(current_user)
 
     try:
-        film_status = await db_create_or_update_status(film_status.user_id,
-                                                       film_status.film_id,
-                                                       film_status.status,
-                                                       film_status.rating)
+        film_status = await db.db_create_or_update_status(film_status.user_id,
+                                                          film_status.film_id,
+                                                          film_status.status,
+                                                          film_status.rating)
         return film_status
     except UserNotFound:
         raise HTTPException(status_code=404,
